@@ -1,7 +1,7 @@
 ﻿using Rage;
 using LSPD_First_Response.Mod.API;
 using LSPD_First_Response.Mod.Callouts;
-using LSPD_First_Response.Engine.Scripting.Entities;
+//using LSPD_First_Response.Engine.Scripting.Entities;
 using System;
 
 namespace Aliens.Callouts
@@ -11,29 +11,48 @@ namespace Aliens.Callouts
     {
         private Ped Suspect;
         private Vector3 SpawnPoint;
+        //private Vector3 ZoneSpawn;
         private Blip SuspectBlip;
         private LHandle Pursuit;
         private bool PursuitCreated = false;
-
-
+        private static Vector3 ZoneSpawn = new Vector3(1821.44653f, 3289.97534f, 43.2852364f);
+      
         public override bool OnBeforeCalloutDisplayed()
         {
-            SpawnPoint = World.GetNextPositionOnStreet(Game.LocalPlayer.Character.Position.Around(1000f));
+            //ZoneSpawn = new Vector3(1821.44653f, 3289.97534f, 43.2852364f); I tried so hard
+       
 
-            ShowCalloutAreaBlipBeforeAccepting(SpawnPoint, 30f);
-            AddMinimumDistanceCheck(40f, SpawnPoint);
+            if (Game.LocalPlayer.Character.Position.DistanceTo(ZoneSpawn) <= 1000f)
+            {
+                SpawnPoint = World.GetNextPositionOnStreet(Game.LocalPlayer.Character.Position.Around(300f));
 
-            CalloutMessage = "Mexicans entering Country";
-            CalloutPosition = SpawnPoint;
+                ShowCalloutAreaBlipBeforeAccepting(SpawnPoint, 30f);
+                AddMinimumDistanceCheck(40f, SpawnPoint);
 
+                CalloutMessage = "Mexicans entering Country";
+                CalloutPosition = SpawnPoint;
 
-            return base.OnBeforeCalloutDisplayed();
+                return base.OnBeforeCalloutDisplayed();
+            }
+
+            else
+            {
+                //abort callout
+                Game.LogTrivial("Callout Zone out of Range");
+                return false;
+                
+            }
+            
         }
 
         public override bool OnCalloutAccepted()
         {
-
-            Suspect = new Ped("s_m_m_lathandy_01", SpawnPoint, 30f);
+            Random rnd = new Random();
+            int rsl = rnd.Next(0, 5);
+            string[] pedlist = new string[] { "s_m_m_lathandy_01", "a_m_y_business_01", "ig_claypain", "s_f_m_fembarber", "a_f_y_genhot_01", "a_f_y_indian_01" };
+            Suspect = new Ped(pedlist[rsl], SpawnPoint, 30f);
+            //Debug
+            Game.LogTrivial($"Sucessfully selected {pedlist[rsl]}!");
             Suspect.Tasks.Wander();
             SuspectBlip = Suspect.AttachBlip();
             Suspect.IsPersistent = true;
@@ -47,10 +66,7 @@ namespace Aliens.Callouts
             base.Process();
             if (!PursuitCreated && Game.LocalPlayer.Character.DistanceTo(Suspect.Position) <= 10f)
             {
-                Pursuit = Functions.CreatePursuit();
-                Functions.AddPedToPursuit(Pursuit, Suspect);
-                Functions.SetPursuitIsActiveForPlayer(Pursuit, true);
-                PursuitCreated = true;
+                StartElude(); 
             }
 
             if (Suspect.IsCuffed && !Functions.IsPursuitStillRunning(Pursuit))
@@ -59,6 +75,21 @@ namespace Aliens.Callouts
             }
         }
 
+        private void StartElude()
+        {
+            GameFiber.StartNew(delegate
+            {
+                Game.DisplaySubtitle("Ayayay!");
+                GameFiber.Sleep(3000);
+
+
+                Pursuit = Functions.CreatePursuit();
+                Functions.AddPedToPursuit(Pursuit, Suspect);
+                Functions.SetPursuitIsActiveForPlayer(Pursuit, true);
+                PursuitCreated = true;
+            });
+           
+        }
         public override void End()
         {
             base.End();
