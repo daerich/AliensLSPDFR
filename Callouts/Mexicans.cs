@@ -61,7 +61,7 @@ namespace Aliens.Callouts
                 StartElude(); 
             }
 
-            if (Suspect.IsCuffed && !Functions.IsPursuitStillRunning(Pursuit))
+            if (PursuitCreated && !Functions.IsPursuitStillRunning(Pursuit))
             {
                 End();
             }
