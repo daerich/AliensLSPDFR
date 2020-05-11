@@ -22,26 +22,18 @@ namespace Aliens.Callouts
             //ZoneSpawn = new Vector3(1821.44653f, 3289.97534f, 43.2852364f); I tried so hard
        
 
-            if (Game.LocalPlayer.Character.Position.DistanceTo(ZoneSpawn) <= 1000f)
-            {
+           
                 SpawnPoint = World.GetNextPositionOnStreet(Game.LocalPlayer.Character.Position.Around(300f));
 
                 ShowCalloutAreaBlipBeforeAccepting(SpawnPoint, 30f);
-                AddMinimumDistanceCheck(40f, SpawnPoint);
+                AddMaximumDistanceCheck(1000f, ZoneSpawn);
 
                 CalloutMessage = "Mexicans entering Country";
                 CalloutPosition = SpawnPoint;
 
                 return base.OnBeforeCalloutDisplayed();
-            }
+            
 
-            else
-            {
-                //abort callout
-                Game.LogTrivial("Callout Zone out of Range");
-                return false;
-                
-            }
             
         }
 
@@ -49,7 +41,7 @@ namespace Aliens.Callouts
         {
             Random rnd = new Random();
             int rsl = rnd.Next(0, 5);
-            string[] pedlist = new string[] { "s_m_m_lathandy_01", "a_m_y_business_01", "ig_claypain", "s_f_m_fembarber", "a_f_y_genhot_01", "a_f_y_indian_01" };
+            string[] pedlist = { "s_m_m_lathandy_01", "a_m_y_business_01", "ig_claypain", "s_f_m_fembarber", "a_f_y_genhot_01", "a_f_y_indian_01" };
             Suspect = new Ped(pedlist[rsl], SpawnPoint, 30f);
             //Debug
             Game.LogTrivial($"Sucessfully selected {pedlist[rsl]}!");
@@ -99,3 +91,4 @@ namespace Aliens.Callouts
 
         }
     } }
+
