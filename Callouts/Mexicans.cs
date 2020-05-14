@@ -23,10 +23,10 @@ namespace Aliens.Callouts
        
 
            
-                SpawnPoint = World.GetNextPositionOnStreet(Game.LocalPlayer.Character.Position.Around(300f));
+                SpawnPoint = World.GetNextPositionOnStreet(ZoneSpawn.Around(1000f));
 
                 ShowCalloutAreaBlipBeforeAccepting(SpawnPoint, 30f);
-                AddMaximumDistanceCheck(1000f, ZoneSpawn);
+                AddMaximumDistanceCheck(300f, Game.LocalPlayer.Character.Position);
 
                 CalloutMessage = "Mexicans entering Country";
                 CalloutPosition = SpawnPoint;
