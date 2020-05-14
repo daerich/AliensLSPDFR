@@ -38,10 +38,13 @@ namespace Aliens.Callouts
 
             SuspectBlip = Suspect.AttachBlip();
             SuspectBlip.IsFriendly = false;
-            Suspect.RelationshipGroup = "Assailant";
+            Suspect.RelationshipGroup = "HATES_PLAYER";
 
-            Game.SetRelationshipBetweenRelationshipGroups("Assailant", "COP", Relationship.Hate);
-            Game.SetRelationshipBetweenRelationshipGroups("Assailant", "PLAYER", Relationship.Hate);
+            //setup relationship for combat situations
+
+            Game.LocalPlayer.Character.RelationshipGroup = "COP";
+            Game.SetRelationshipBetweenRelationshipGroups("HATES_PLAYER", "COP", Relationship.Hate);
+            Game.SetRelationshipBetweenRelationshipGroups("COP", "HATES_PLAYER", Relationship.Hate);
 
             // Suspect.Tasks.CruiseWithVehicle(SusVehicle, 20f, VehicleDrivingFlags.FollowTraffic);
             Suspect.Tasks.DriveToPosition(Game.LocalPlayer.Character.Position, 10f, VehicleDrivingFlags.FollowTraffic);
