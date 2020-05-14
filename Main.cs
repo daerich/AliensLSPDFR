@@ -31,6 +31,7 @@ namespace Aliens
         private static void RegisterCallouts()
         {
             Functions.RegisterCallout(typeof(MexicansOnBorder));
+            Functions.RegisterCallout(typeof(DrugRunners));
         }
     }
 }
