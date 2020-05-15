@@ -34,7 +34,7 @@ namespace Aliens.Callouts
 
             Suspect.IsPersistent = true;
             Suspect.BlockPermanentEvents = true;
-            Suspect.Inventory.GiveNewWeapon("WEAPON_PISTOL", 10000, true);
+            Suspect.Inventory.GiveNewWeapon("WEAPON_PISTOL", -1 , true);
 
             SuspectBlip = Suspect.AttachBlip();
             SuspectBlip.IsFriendly = false;
@@ -42,12 +42,12 @@ namespace Aliens.Callouts
 
             //setup relationship for combat situations
 
-            Game.LocalPlayer.Character.RelationshipGroup = "COP";
+           /* Game.LocalPlayer.Character.RelationshipGroup = "COP";
             Game.SetRelationshipBetweenRelationshipGroups("HATES_PLAYER", "COP", Relationship.Hate);
-            Game.SetRelationshipBetweenRelationshipGroups("COP", "HATES_PLAYER", Relationship.Hate);
+            Game.SetRelationshipBetweenRelationshipGroups("COP", "HATES_PLAYER", Relationship.Hate); */
 
             // Suspect.Tasks.CruiseWithVehicle(SusVehicle, 20f, VehicleDrivingFlags.FollowTraffic);
-            Suspect.Tasks.DriveToPosition(Game.LocalPlayer.Character.Position, 10f, VehicleDrivingFlags.FollowTraffic);
+            Suspect.Tasks.DriveToPosition(Game.LocalPlayer.Character.Position, 10f, VehicleDrivingFlags.Normal);
 
             Events.OnPulloverStarted += PulloverStartedHandler;
 
@@ -84,12 +84,13 @@ namespace Aliens.Callouts
             GameFiber.StartNew(delegate
             {
 
-                GameFiber.Sleep(5000);
+                GameFiber.Sleep(3000);
 
                 Suspect.Tasks.LeaveVehicle(SusVehicle, LeaveVehicleFlags.LeaveDoorOpen);
 
                 GameFiber.Sleep(5000); //crude async emulation
-                Suspect.Tasks.FireWeaponAt(Game.LocalPlayer.Character.Position, 10000, FiringPattern.SingleShot);
+                //Suspect.Tasks.FireWeaponAt(Game.LocalPlayer.Character.Position, -1 , FiringPattern.SingleShot);
+                Suspect.Tasks.FightAgainst(Game.LocalPlayer.Character);
 
 
 

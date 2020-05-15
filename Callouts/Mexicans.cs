@@ -20,20 +20,27 @@ namespace Aliens.Callouts
         public override bool OnBeforeCalloutDisplayed()
         {
             //ZoneSpawn = new Vector3(1821.44653f, 3289.97534f, 43.2852364f); I tried so hard
-       
+            if (Game.LocalPlayer.Character.Position.DistanceTo(ZoneSpawn) <= 1000f)
+            {
 
-           
-                SpawnPoint = World.GetNextPositionOnStreet(ZoneSpawn.Around(1000f));
+
+                SpawnPoint = World.GetNextPositionOnStreet(ZoneSpawn.Around(100f));
 
                 ShowCalloutAreaBlipBeforeAccepting(SpawnPoint, 30f);
-                AddMaximumDistanceCheck(300f, Game.LocalPlayer.Character.Position);
+                //AddMaximumDistanceCheck(1000f, Game.LocalPlayer.Character.Position);
 
                 CalloutMessage = "Mexicans entering Country";
                 CalloutPosition = SpawnPoint;
 
                 return base.OnBeforeCalloutDisplayed();
-            
 
+            }
+
+
+            else
+            {
+                return false;
+            }
             
         }
 
