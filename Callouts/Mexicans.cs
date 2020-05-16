@@ -11,7 +11,6 @@ namespace Aliens.Callouts
     {
         private Ped Suspect;
         private Vector3 SpawnPoint;
-        //private Vector3 ZoneSpawn;
         private Blip SuspectBlip;
         private LHandle Pursuit;
         private bool PursuitCreated = false;
@@ -19,12 +18,11 @@ namespace Aliens.Callouts
       
         public override bool OnBeforeCalloutDisplayed()
         {
-            //ZoneSpawn = new Vector3(1821.44653f, 3289.97534f, 43.2852364f); I tried so hard
             if (Game.LocalPlayer.Character.Position.DistanceTo(ZoneSpawn) <= 1000f)
             {
 
 
-                SpawnPoint = World.GetNextPositionOnStreet(ZoneSpawn.Around(100f));
+                SpawnPoint = World.GetNextPositionOnStreet(Game.LocalPlayer.Character.Position.Around(100f));
 
                 ShowCalloutAreaBlipBeforeAccepting(SpawnPoint, 30f);
                 //AddMaximumDistanceCheck(1000f, Game.LocalPlayer.Character.Position);

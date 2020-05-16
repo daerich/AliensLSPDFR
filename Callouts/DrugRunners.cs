@@ -1,6 +1,7 @@
 ﻿using Rage;
 using LSPD_First_Response.Mod.API;
 using LSPD_First_Response.Mod.Callouts;
+using System;
 
 namespace Aliens.Callouts
 {
@@ -11,8 +12,6 @@ namespace Aliens.Callouts
         private Vehicle SusVehicle;
         private Vector3 SpawnPoint;
         private Blip SuspectBlip;
-       // private Weapon weapon = new Weapon(WeaponAsset weapon_microsmg,)
-        private bool isSuspect = false;
 
         public override bool OnBeforeCalloutDisplayed()
         {
@@ -34,22 +33,18 @@ namespace Aliens.Callouts
 
             Suspect.IsPersistent = true;
             Suspect.BlockPermanentEvents = true;
-            Suspect.Inventory.GiveNewWeapon("WEAPON_PISTOL", -1 , true);
+            Suspect.Inventory.GiveNewWeapon("WEAPON_PISTOL", -1, true);
 
             SuspectBlip = Suspect.AttachBlip();
             SuspectBlip.IsFriendly = false;
-            Suspect.RelationshipGroup = "HATES_PLAYER";
-
-            //setup relationship for combat situations
-
-           /* Game.LocalPlayer.Character.RelationshipGroup = "COP";
-            Game.SetRelationshipBetweenRelationshipGroups("HATES_PLAYER", "COP", Relationship.Hate);
-            Game.SetRelationshipBetweenRelationshipGroups("COP", "HATES_PLAYER", Relationship.Hate); */
+            
 
             // Suspect.Tasks.CruiseWithVehicle(SusVehicle, 20f, VehicleDrivingFlags.FollowTraffic);
             Suspect.Tasks.DriveToPosition(Game.LocalPlayer.Character.Position, 10f, VehicleDrivingFlags.Normal);
 
             Events.OnPulloverStarted += PulloverStartedHandler;
+
+            Events.OnPulloverEnded += PulloverEndedEventHandler;
 
             return base.OnCalloutAccepted();
         }
@@ -58,26 +53,42 @@ namespace Aliens.Callouts
         {
             base.Process();
 
-          /*  if (isSuspect)
-            {
-                StartShooting();
-                
-            } */
-
-            if(!Suspect.IsAlive && isSuspect || Suspect.IsCuffed && isSuspect)
+          if (!Suspect.IsAlive || Suspect.IsCuffed)
             {
                 End();
-            }
+            } 
+
+
+        }
+
+
+        private int RandomDecision()
+        {
+            Random rnd = new Random();
+
+            return rnd.Next(1000);
+
         }
 
         private void PulloverStartedHandler(LHandle Pullover)
         {
-           if(Suspect == Functions.GetPulloverSuspect(Pullover))
+            if (Suspect == Functions.GetPulloverSuspect(Pullover) && RandomDecision() <= 500) //debug probablity
             {
-                isSuspect = true;
+                Game.LogTrivial("Unpleasant ending");
                 StartScenario();
             }
+
+
         }
+
+       private void PulloverEndedEventHandler(LHandle Pullover, bool normalEnding)
+        {
+            if (normalEnding)
+            {
+                End();
+
+            }           
+        } 
 
         private void StartScenario()
         {
@@ -97,7 +108,7 @@ namespace Aliens.Callouts
             });
         }
 
-              public override void End()
+       public override void End()
         {
             base.End();
 
